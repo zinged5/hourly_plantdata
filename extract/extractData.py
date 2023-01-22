@@ -24,12 +24,14 @@ def get_hourly_generations(start,end,plant_id=None):
             params = {'startDate': start, 'endDate': end, 'powerPlantId': plant_id}
             response = requests.get(PLANT_URL, params=params)
             df_generation = pd.DataFrame(response.json()['body']['hourlyGenerations'])
-            # target=f'/Users/amy/Documents/df_generation_{str(id)}.parquet'
+            timestamp = datetime.now()
+            timestamp = timestamp.strftime("%m.%d.%Y_%H.%M.%S")
             target = f'/Users/amy/Documents/hourlyGeneration_{timestamp}_{str(plant_id)}.csv'
             df_generation.to_csv(target)
             return df_generation
         else:
             plant_ids=df_plant_ids['id']
+
     except:
         logging.log(30,f'Something went wrong during fetching data from {LIST_URL} at {datetime.now()}')
         return
@@ -38,15 +40,15 @@ def get_hourly_generations(start,end,plant_id=None):
             for id in plant_ids:
                 params = {'startDate': start, 'endDate': end, 'powerPlantId': id}
                 response = requests.get(PLANT_URL, params=params)
+                print(params)
                 df_generation = pd.DataFrame(response.json()['body']['hourlyGenerations'])
                 # target=f'/Users/amy/Documents/df_generation_{str(id)}.parquet'
-                target = f'/Users/amy/Documents/hourlyGeneration_{timestamp}_{str(plant_id)}.csv'
+                target = f'/Users/amy/Documents/hourlyGeneration/hourlyGeneration_{timestamp}_{id}.csv'
                 # df_generation.to_parquet(target,compression='snappy')
                 df_generation.to_csv(target, index=False)
                 logging.log(10, f'data imported for plant_id {id} at {target}')
-                # df_generation.to_csv(target,index=False)
             return
         except:
-            logging.log(30,f'Something went wrong fetching the data from {PLANT_URL} querying {id} ')
+            logging.log(30,f'Something went wrong while fetching the data from {PLANT_URL} querying {id} ')
             return
 

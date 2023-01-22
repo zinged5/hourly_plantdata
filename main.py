@@ -11,18 +11,20 @@ from transform import transformData
 from load import loadData
 
 # start/end date parametized
-start=str(pd.Timestamp(datetime.date(datetime.today()- timedelta(days=1))))
+# start=str(pd.Timestamp(datetime.date(datetime.today()- timedelta(days=1))))
+#
+# end=str(pd.Timestamp(datetime.date(datetime.today())))
+start=str(pd.Timestamp('2022-01-01'))
 
-end=str(pd.Timestamp(datetime.date(datetime.today())))
-
+end=str(pd.Timestamp('2022-02-01'))
 
 
 if __name__ == '__main__':
     # start timer
     starttime = timeit.timeit()
     try:
-        # extract raw data, save it to parquet
-        # raw_data=extractData.get_hourly_generations(start,end)
+        # extract raw data
+        raw_data=extractData.get_hourly_generations(start,end)
         # transform raw data
         dir=f'/Users/amy/Documents/hourlyGenerationFiles'
         path = os.walk(dir, topdown=True)
@@ -55,9 +57,10 @@ if __name__ == '__main__':
                     d=Path(file).rename(processed_dir)
                 else:
                     logging.log(30,f'{file} is empty')
-        # stop timer
+
     except:
         logging.log(30, f'process failed at {datetime.now()}')
+    # stop the timer
     endtime = timeit.timeit()
     logging.log(10,f'process took {endtime - starttime}')
 
