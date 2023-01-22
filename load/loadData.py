@@ -1,23 +1,26 @@
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import pandas as pd
 import logging
+
+import transform.transformData
 from extract import extractData
 from transform import transformData
 
 def load_hourlyGenerations(data,target):
-    return data
+    df=data
+    if df is not None:
+        timestamp = datetime.now()
+        timestamp = timestamp.strftime("%m.%d.%Y_%H.%M.%S")
+        try:
+            target=Path(target)
+            target.parent.mkdir(parents=True,exist_ok=True)
+            df.to_csv(target,index=False)
+        except:
+            logging.log(30,f'failed to load hourlyGenerations file')
+    return
 
 
-target = f'/Users/amy/Documents/hourlyGeneration_{str(id)}.csv'
-start=str(pd.Timestamp(datetime.date(datetime.today()- timedelta(days=1))))
 
-end=str(pd.Timestamp(datetime.date(datetime.today())))
 
-raw_data=extractData.get_hourly_generations(start, end,plant_id=989)
-    # transform raw data
-transformed_data=transformData.transform_hourly_generations(raw_data)
-    # load transformed data to csv
-load=load_hourlyGenerations(transformed_data,target)
-
-print(load)
