@@ -1,12 +1,6 @@
-import time
-import timeit
-from datetime import datetime, timedelta
-
-
 import pandas as pd
 import logging
 
-# data='/Users/amy/Documents/df_generation_1.csv'
 def transform_hourly_generations(data):
     df=pd.read_csv(data)
     if df is not None:
@@ -21,7 +15,7 @@ def transform_hourly_generations(data):
             df['hour']=df['datetime'].apply(lambda x: datetime_converter(x,'hour'))
             df['min'] =df['datetime'].apply(lambda x: datetime_converter(x,'min'))
             df['sec']=df['datetime'].apply(lambda x: datetime_converter(x,'sec'))
-            df['plant_id']=filename.split('_')[1]
+            df['plant_id']=filename.split('_')[3]
             df=df.reindex(columns=['plant_id','datetime','date','hour','min','sec','fueloil','gasOil','blackCoal','lignite','geothermal','naturalGas','river','dammedHydro','lng','biomass','naphta','importCoal','asphaltiteCoal','wind','nucklear','sun','importExport','wasteheat','total'])
             return df
         except:

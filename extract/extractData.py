@@ -1,4 +1,3 @@
-import timeit
 from datetime import datetime, timedelta
 import pandas as pd
 import requests
@@ -13,7 +12,7 @@ config.read(configFilePath)
 LIST_URL=config.defaults()['list_url']
 PLANT_URL=config.defaults()['plant_url']
 
-def get_hourly_generations(start,end,plant_id=None):
+def get_hourly_generations(start,end,target,plant_id=None):
     logging.log(10, f'starting get_hourly_generations at {datetime.now()}')
     try:
         timestamp = datetime.now()
@@ -26,8 +25,8 @@ def get_hourly_generations(start,end,plant_id=None):
             df_generation = pd.DataFrame(response.json()['body']['hourlyGenerations'])
             timestamp = datetime.now()
             timestamp = timestamp.strftime("%m.%d.%Y_%H.%M.%S")
-            target = f'/Users/amy/Documents/hourlyGeneration_{timestamp}_{str(plant_id)}.csv'
-            df_generation.to_csv(target)
+            target = f'{target}/hourlyfile_{timestamp}_{str(plant_id)}.csv'
+            df_generation.to_csv(target,index=False)
             return df_generation
         else:
             plant_ids=df_plant_ids['id']
@@ -42,12 +41,9 @@ def get_hourly_generations(start,end,plant_id=None):
                 response = requests.get(PLANT_URL, params=params)
                 print(params)
                 df_generation = pd.DataFrame(response.json()['body']['hourlyGenerations'])
-                # target=f'/Users/amy/Documents/df_generation_{str(id)}.parquet'
-                target = f'/Users/amy/Documents/hourlyGeneration/hourlyGeneration_{timestamp}_{id}.csv'
-                # df_generation.to_parquet(target,compression='snappy')
-                df_generation.to_csv(target, index=False)
+                # you could use parquet : df_generation.to_parquet(target,compression='snappy')
+                df_generation.to_csv(f'{target}/hourlyfile_{timestamp}_{str(id)}.csv', index=False)
                 logging.log(10, f'data imported for plant_id {id} at {target}')
-            return
         except:
             logging.log(30,f'Something went wrong while fetching the data from {PLANT_URL} querying {id} ')
             return
